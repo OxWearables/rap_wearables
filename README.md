@@ -34,7 +34,6 @@ This worked example draws on several earlier examples and tutorials:
 
 - https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/using-spark-to-analyze-tabular-data
 - https://github.com/dnanexus/OpenBio/blob/master/UKB_notebooks/ukb-rap-pheno-basic.ipynb
-- https://oxwearables.github.io/cdtWearablesHealth/index.html
 
 It was written by [Rosemary Walmsley](mailto::rosemary.walmsley@bdi.ox.ac.uk) and Junayed Naushad, with contributions and advice from Ondrej Klempir, Aiden Doherty, and Ben Busby.
 
