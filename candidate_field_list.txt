@@ -1,0 +1,173 @@
+#  First stab at a set of fields to extract from the tabular data
+
+# DEMOGRAPHICS 
+31 # sex.31
+34 # yearBirth.34
+52 # monthBirth.52
+21000 # ethnicity.21000
+
+# SAMPLING 
+53 # testCenDate.53
+54 # testCen.54
+191 # date_lost_to_follow_up
+
+# BIOMETRICS
+93 # systolicBP-manual.93 NB two measurements
+94 # diastolicBP-manual.94 NB two measurements
+4079 # diastolicBP-auto.4079 NB two measurements
+4080 # systolicBP-auto.4080 NB two measurements
+21001 # bmi.21001
+23099 # bodyFat.23099
+
+# SOCIOECONOMIC
+189 # townsendIndex.189
+845 # ageCompletedFullTimeEducation.845
+6138 # education.6138
+
+# BEHAVIOURAL 
+1558 # alcohol.1558
+20116 # smoke.20116
+
+# SR HEALTH 
+2178 # overallHealth.2178
+2188 # disability.2188
+2443 # diabetesDiag.2443
+6150 # heartProbs.6150
+
+# DIET
+1289 # Cooked_vegetable_intake
+1299 # Salad_/_raw_vegetable_intake
+1309 # Fresh_fruit_intake
+1319 # Dried_fruit_intake
+1329 # Oily_fish_intake
+1349 # Processed_meat_intake
+1359 # Poultry_intake
+1369 # Beef_intake
+1379 # Lamb/mutton_intake
+1389 # Pork_intake
+1478 # Salt_added_to_food
+
+#_BIOMARKERS_BLOOD_BIOCHEMISTRY
+30710 # C-reactive_protein
+30690 # Cholesterol
+30750 # Glycated_haemoglobin_(HbA1c)
+30760 # HDL_cholesterol
+30780 # LDL_direct
+30870 # Triglycerides
+
+# ACCELEROMETER RELATED
+## Dates
+90010 # Start time of wear
+90011 # End time of wear
+
+## Quality
+90015 # Data_quality,_good_wear_time
+90051 # Overall wear duration
+90016 # Data_quality,_good_calibration
+90183 # Data_quality,_clips_before_calibration
+90185 # Data_quality,_clips_after_calibration
+90187 # Total_readings
+
+## Overall summary, intensity summary
+90012 # Overall_acceleration_average
+90092 # Fraction acceleration <= 1 milli-gravities
+90093 # Fraction acceleration <= 2 milli-gravities
+90094 # Fraction acceleration <= 3 milli-gravities
+90095 # Fraction acceleration <= 4 milli-gravities
+90096 # Fraction acceleration <= 5 milli-gravities
+90097 # Fraction acceleration <= 6 milli-gravities
+90098 # Fraction acceleration <= 7 milli-gravities
+90099 # Fraction acceleration <= 8 milli-gravities
+90100 # Fraction acceleration <= 9 milli-gravities
+90101 # Fraction acceleration <= 10 milli-gravities
+90102 # Fraction acceleration <= 11 milli-gravities
+90103 # Fraction acceleration <= 12 milli-gravities
+90104 # Fraction acceleration <= 13 milli-gravities
+90105 # Fraction acceleration <= 14 milli-gravities
+90106 # Fraction acceleration <= 15 milli-gravities
+90107 # Fraction acceleration <= 16 milli-gravities
+90108 # Fraction acceleration <= 17 milli-gravities
+90109 # Fraction acceleration <= 18 milli-gravities
+90110 # Fraction acceleration <= 19 milli-gravities
+90111 # Fraction acceleration <= 20 milli-gravities
+90112 # Fraction acceleration <= 25 milli-gravities
+90113 # Fraction acceleration <= 30 milli-gravities
+90114 # Fraction acceleration <= 35 milli-gravities
+90115 # Fraction acceleration <= 40 milli-gravities
+90116 # Fraction acceleration <= 45 milli-gravities
+90117 # Fraction acceleration <= 50 milli-gravities
+90118 # Fraction acceleration <= 55 milli-gravities
+90119 # Fraction acceleration <= 60 milli-gravities
+90120 # Fraction acceleration <= 65 milli-gravities
+90121 # Fraction acceleration <= 70 milli-gravities
+90122 # Fraction acceleration <= 75 milli-gravities
+90123 # Fraction acceleration <= 80 milli-gravities
+90124 # Fraction acceleration <= 85 milli-gravities
+90125 # Fraction acceleration <= 90 milli-gravities
+90126 # Fraction acceleration <= 95 milli-gravities
+90127 # Fraction acceleration <= 100 milli-gravities
+90128 # Fraction acceleration <= 125 milli-gravities
+90129 # Fraction acceleration <= 150 milli-gravities
+90130 # Fraction acceleration <= 175 milli-gravities
+90131 # Fraction acceleration <= 200 milli-gravities
+90132 # Fraction acceleration <= 225 milli-gravities
+90133 # Fraction acceleration <= 250 milli-gravities
+90134 # Fraction acceleration <= 275 milli-gravities
+90135 # Fraction acceleration <= 300 milli-gravities
+90136 # Fraction acceleration <= 325 milli-gravities
+90137 # Fraction acceleration <= 350 milli-gravities
+90138 # Fraction acceleration <= 375 milli-gravities
+90139 # Fraction acceleration <= 400 milli-gravities
+90140 # Fraction acceleration <= 425 milli-gravities
+90141 # Fraction acceleration <= 450 milli-gravities
+90142 # Fraction acceleration <= 475 milli-gravities
+90143 # Fraction acceleration <= 500 milli-gravities
+90144 # Fraction acceleration <= 600 milli-gravities
+90145 # Fraction acceleration <= 700 milli-gravities
+90146 # Fraction acceleration <= 800 milli-gravities
+90147 # Fraction acceleration <= 900 milli-gravities
+90148 # Fraction acceleration <= 1000 milli-gravities
+90149 # Fraction acceleration <= 1100 milli-gravities
+90150 # Fraction acceleration <= 1200 milli-gravities
+90151 # Fraction acceleration <= 1300 milli-gravities
+90152 # Fraction acceleration <= 1400 milli-gravities
+90153 # Fraction acceleration <= 1500 milli-gravities
+90154 # Fraction acceleration <= 1600 milli-gravities
+90155 # Fraction acceleration <= 1700 milli-gravities
+90156 # Fraction acceleration <= 1800 milli-gravities
+90157 # Fraction acceleration <= 1900 milli-gravities
+90158 # Fraction acceleration <= 2000 milli-gravities
+
+
+## Summaries by day/time
+90019 # Monday average acceleration
+90020 # Tuesday average acceleration
+90021 # Wednesday average acceleration
+90022 # Thursday average acceleration
+90023 # Friday average acceleration
+90024 # Saturday average acceleration
+90025 # Sunday average acceleration
+90027 # Average acceleration 00:00 - 00:59
+90028 # Average acceleration 01:00 - 01:59
+90029 # Average acceleration 02:00 - 02:59
+90030 # Average acceleration 03:00 - 03:59
+90031 # Average acceleration 04:00 - 04:59
+90032 # Average acceleration 05:00 - 05:59
+90033 # Average acceleration 06:00 - 06:59
+90034 # Average acceleration 07:00 - 07:59
+90035 # Average acceleration 08:00 - 08:59
+90036 # Average acceleration 09:00 - 09:59
+90037 # Average acceleration 10:00 - 10:59
+90038 # Average acceleration 11:00 - 11:59
+90039 # Average acceleration 12:00 - 12:59
+90040 # Average acceleration 13:00 - 13:59
+90041 # Average acceleration 14:00 - 14:59
+90042 # Average acceleration 15:00 - 15:59
+90043 # Average acceleration 16:00 - 16:59
+90044 # Average acceleration 17:00 - 17:59
+90045 # Average acceleration 18:00 - 18:59
+90046 # Average acceleration 19:00 - 19:59
+90047 # Average acceleration 20:00 - 20:59
+90048 # Average acceleration 21:00 - 21:59
+90049 # Average acceleration 22:00 - 22:59
+90050 # Average acceleration 23:00 - 23:59
