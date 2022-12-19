@@ -1,5 +1,7 @@
 # Using wearables data on the RAP
 
+Note (2022-12-19): R code in Jupyter notebooks is currently not rendering correctly on GitHub. To view notebooks 2-4 with correct formatting, please download them.
+
 ## What is this repository?
 This repository provides a **worked example of using wearables data available in UK Biobank for an analysis associating physical activity level with risk of incident cardiovascular disease**. Analyses are based on [this paper](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649) and [this paper](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1003487).
 
