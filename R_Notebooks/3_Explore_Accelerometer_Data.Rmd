@@ -340,3 +340,53 @@ p<-ggplot(dat, aes(season, overall_activity)) +
   ylab("Acceleration [mg]")
 p
 ```
+
+## Acceleration by Time of Day
+```{r}
+# set up tick marks
+hours <- c('12am', paste0(1:11,'am'), '12pm', paste0(1:11,'pm'))
+
+# Column Variables
+colvars = names(dat)
+
+# Get the first fraction acceleration column ID
+start_loc = match('Average acceleration 00:00 - 00:59',colvars)
+
+# Get the last fraction acceleration column ID
+end_loc = match('Average acceleration 23:00 - 23:59',colvars)
+
+dat_hour <- dat[, c(1, start_loc:end_loc)]
+names(dat_hour)[-1] <- hours
+
+dat_hour <- merge(melt(dat_hour, id.vars='eid'), 
+                  dat[, c('eid', 'age_cat', 'sex')], 
+                  by='eid', all.x=TRUE)
+
+# Group by function for dataframe in R using pipe operator 
+dat_hour_means <- dat_hour %>% group_by(variable, age_cat, sex) %>% summarise_at(vars(value),funs(mean(.,na.rm=TRUE)))
+
+p<-ggplot(dat_hour_means[dat_hour_means$sex=='Female',], aes(x=variable, y=value, color=age_cat)) +
+  theme_bw() + 
+  ggtitle("Acceleration by Time of Day - Female") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  geom_line(aes(group=age_cat)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, hjust=1), 
+        text = element_text(size=10)) +
+  xlab("Hour of Day") + 
+  ylab("Acceleration [mg]")
+p
+
+
+p<-ggplot(dat_hour_means[dat_hour_means$sex=='Male',], aes(x=variable, y=value, color=age_cat)) +
+  theme_bw() + 
+  ggtitle("Acceleration by Time of Day - Male") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  geom_line(aes(group=age_cat)) +
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, hjust=1), 
+        text = element_text(size=10)) +
+  xlab("Hour of Day") + 
+  ylab("Acceleration [mg]")
+p
+```
