@@ -36,7 +36,7 @@ This notebook should be run in a *RStudio* session. It does *not* require a Spar
 
 We load packages we'll use:
 
-```{r}
+```{r, include=FALSE}
 # First we need to install packages that aren't already present
 pkgs <- c("data.table", "plyr") # packages we need
 pkgs_inst <- pkgs[!{pkgs %in% rownames(installed.packages())}] # check which are not present 
