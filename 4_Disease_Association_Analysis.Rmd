@@ -1,0 +1,265 @@
+# A Basic Disease Association Analysis Using the UKB Accelerometer Data
+## Introduction
+In this notebook, we will associate overall activity levels with risk of incident cardiovascular disease.
+
+## How to run this notebook
+This notebook should be run in a *JupyterLab* session, with R as the kernel. It does *not* require a Spark cluster. See how to set it up [here](https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/using-jupyterlab-on-the-research-analysis-platform).
+
+The same conventions are followed as in notebook 2 (the first R notebook).
+
+As in the earlier notebooks, this notebook is a demo, not an indicator of best practice. Analytic decisions here (e.g. which variables are adjusted for) are based on the papers we replicate, and should not be interpreted as prescriptive. Analytic decisions should be made afresh in the context of each new analysis.
+## Set up the session
+
+We load packages:
+# First we need to install packages that aren't already present
+```{r}
+pkgs <- c("data.table", "ggplot2", "survival", "table1", "IRdisplay", "dplyr") # packages we need
+pkgs_inst <- pkgs[!{pkgs %in% rownames(installed.packages())}] # check which are not present 
+install.packages(pkgs_inst, repos = "https://www.stats.bris.ac.uk/R/")
+
+# Load packages
+lapply(pkgs, library, character.only = TRUE)
+# using lapply just allows us to load several packages on one line
+```
+
+We load the data we prepared earlier (noting again that the code is different depending on whether you're running it in the same session as the earlier scripts, or have come back to do this later): 
+```{r}
+dat <- fread("prepped_data.csv", data.table = FALSE) # version if running in same session as notebook 2
+#dat <- fread("/mnt/project/Accelerometry_RAP_Demo/prepped_data.csv", data.table = FALSE) # version if running in different session
+## Summarise and prepare the data
+```
+
+We summarise to understand the data structure:
+```{r}
+# summary(dat) # uncomment to run, avoiding printing lots of information on internet
+We create factors and make sure they have sensible ordering of levels (e.g. large-ish reference category): 
+dat$ethnicity <- factor(dat$ethnicity, levels = c("White", "Nonwhite"))
+dat$tdi_quarters <- factor(dat$tdi_quarters, levels = c("Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"))
+dat$smoking <- factor(dat$smoking, levels = c("Never", "Previous", "Current"))
+dat$alcohol <- factor(dat$alcohol, levels = c("<3 times/week", "3+ times/week", "Never"))
+dat$overall_activity_quarters <- factor(dat$overall_activity_quarters, levels = c("Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"))
+```
+
+##  Describe and explore the data
+
+We've explored the accelerometer data in a previous notebook, so here we'll focus on how the accelerometer covaries with the participant characteristics we're most interested in. 
+
+We use the 'table1' package to 'cheat' and generate a nicely formatted table:
+```{r}
+# Add labels
+label(dat$age_entry_years)   <- "Age at accelerometer wear"
+label(dat$overall_activity_quarters) <- "Quarter of overall activity"
+label(dat$sex) <- "Sex"
+label(dat$ethnicity) <- "Ethnicity"
+label(dat$tdi_quarters) <- "Quarter of Townsend Deprivation Index"
+label(dat$age_education) <- "Age completed full-time education"
+label(dat$smoking) <- "Smoking status"
+label(dat$alcohol) <- "Frequency of alcohol consumption"
+label(dat$BMI) <- "BMI"
+units(dat$age_entry_years) <- "years"
+units(dat$overall_activity_quarters) <- "mg"
+
+# We'll customise how we render variables so rather than median (min, max) we present median (Q1, Q3)
+my_render_cont <- function(x){
+  with(
+    stats.apply.rounding(stats.default(x)),
+    c(
+      "",
+      `Mean (SD)` = sprintf("%s (%s)", MEAN, SD),
+      `Median [Q1, Q3]` = sprintf("%s [%s, %s]",
+                                    MEDIAN, Q1, Q3)
+    )
+  )
+}
+
+# Make table
+tab_desc <- table1::table1(~ age_entry_years + sex + ethnicity + tdi_quarters + age_education + smoking + alcohol + BMI | overall_activity_quarters, 
+                           data = dat, 
+                           render.cont = my_render_cont) 
+IRdisplay::display_html(tab_desc) # Show table
+write(tab_desc, "descriptive_table.html")
+```
+There's much more we could do here, but for now we will move on to analysing the association of overall activity with risk of incident cardiovascular disease. 
+
+## Associations with risk of incident cardiovascular disease 
+
+In the data preparation step, we added an event status indicator at exit and a follow-up time variable. Using these, we can run a Cox model to associate overall activity with risk of incident cardiovascular disease. We'll start by using time-on-study as the timescale and set it up using the 'survival' package in R. We'll also adjust for various possible confounding variables (following the confounders used by [Ramakrishnan et al.](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1003487)):
+```{r}
+cox_model <- coxph(
+                Surv(fu_time, ind_inc_cvd) ~ overall_activity_quarters + age_entry_years + sex + ethnicity + tdi_quarters + age_education + smoking + alcohol,
+                data = dat
+                )
+# This line uses functions from the 'survival' package
+```
+
+Alternatively, we could analyse the data using [age as the timescale](https://journals.lww.com/epidem/Fulltext/2012/07000/Proportional_Hazards_Regression_in_Epidemiologic.9.aspx) (rather than time on study): 
+```{r}
+cox_model_age_timescale <- coxph(
+                            Surv(age_entry_days, age_exit_days, ind_inc_cvd) ~ overall_activity_quarters + sex + ethnicity + tdi_quarters + age_education + smoking + alcohol,
+                            data = dat
+                               )
+```
+
+We can now look at modelling assumptions, which we'll do using the first model above. A key assumption of Cox regression is the **proportional hazards assumption**. There are several ways to assess this. One way is through plots and a statistical test of the scaled Schoenfeld residuals. Read more [here](http://www.sthda.com/english/wiki/cox-model-assumptions). Other ways include use of log-log survival plots or considering interaction terms between the variable of interest and time.
+```{r}
+cox.zph(cox_model)
+plot(cox.zph(cox_model))
+```
+It's sometimes hard to judge how important violations of the proportional hazards assumptions are. As the statistical tests just assess evidence against proportionality, they may detect even very modest non-proportionality, particularly if there is a lot of data. Therefore, it's helpful to use graphical methods or a quantitive assessment of the interaction with time as well. 
+
+In this data, it looks like there's reasonable evidence that sex violates the proportional hazards assumption: this can be seen both from the very small p-value of the statistical test and from the trend in the plot of the scaled Schoenfeld residuals for sex. This is something we could address, for example by stratifying on sex: 
+```{r}
+cox_model_strat <- coxph(
+                        Surv(fu_time, ind_inc_cvd) ~ overall_activity_quarters + age_entry_years + strata(sex) + ethnicity + tdi_quarters + age_education + smoking + alcohol,
+                        data = dat
+                        )
+cox.zph(cox_model_strat)
+```
+
+Note that in a Cox model, stratification has a particular meaning: one model is still calculated using data from all participants, but when estimating the model participants are only compared with participants in the same strata (in this case, with other participants of the same sex). Most textbooks covering Cox regression will cover this.
+
+We look at the model summary: 
+```{r}
+summary(cox_model_strat)
+```
+
+The `exp(coef)` column gives the hazard ratio and the lower .95 and upper .95 columns its confidence interval. 
+
+## Presenting results
+
+We could plot the results. First we extract and format them: 
+```{r}
+# Extract details from model
+plot_dat <- as.data.frame(
+  exp(cbind(coef(cox_model_strat), confint(cox_model_strat)))
+)
+colnames(plot_dat) <- c("HR", "lower_CI", "upper_CI")
+plot_dat$var_name <- rownames(plot_dat)
+plot_dat$var_name <- sub("overall_activity_quarters", "", plot_dat$var_name)
+
+# Restrict to only activity variables and add row for the reference
+plot_dat <- plot_dat[1:3, ]
+ref_row <-
+  data.frame(
+    "var_name" = levels(dat$overall_activity_quarters)[1], 
+    "HR" = 1,
+    "lower_CI" = 1,
+    "upper_CI"  = 1
+  )
+plot_dat <- rbind(ref_row, plot_dat)
+
+# Add event numbers
+plot_dat$event_number <- sapply(
+    X = as.factor(plot_dat$var_name),
+    FUN = function(x) sum(dat$ind_inc_cvd[dat$overall_activity_quarters == x])
+  ) 
+
+# Add label columns 
+round_2_dp <- function(x) format(round(x, digits = 2), nsmall = 2) # this line just writes a utility function to round to 2 dp
+plot_dat$label_HR <- paste0(round_2_dp(plot_dat$HR), " (", round_2_dp(plot_dat$lower_CI), ", ", round_2_dp(plot_dat$upper_CI), ")")
+plot_dat$label_quarter <- c("Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4")
+plot_dat$label_events <- plot_dat$event_number
+
+# Add a title row
+title_row <-
+  data.frame(
+    "var_name" = " ", 
+    "HR" = NA,
+    "lower_CI" = NA,
+    "upper_CI"  = NA, 
+    "event_number" = NA, 
+    "label_quarter" = "Group",
+    "label_HR" = "HR (95% CI)", 
+    "label_events" = "Events"
+  )
+
+plot_dat <- rbind(title_row, plot_dat)
+plot_dat$var_name <- factor(plot_dat$var_name, levels = c(" ", levels(dat$overall_activity_quarters)))
+```
+We can then create a plot:
+```{r}
+overall_activity_cox_plot <- ggplot(plot_dat, aes(x = HR, y = var_name)) + # SET UP PLOT DATA 
+  
+  # AXES: SCALES AND LABELS
+  scale_x_continuous(trans = "log", breaks = seq(0.6, 1.0, by = 0.1)) + 
+  scale_y_discrete(limits = rev) +
+  labs(title = "Association of activity with incident CVD", x = "Hazard Ratio") +
+
+  # LINES: VERTICAL LINE AT 1 AND X AXIS
+  geom_vline(aes(xintercept = 1),
+             size = 1) +
+  geom_segment(aes(x = 0.6, xend = 1.05, y = 0, yend = 0), colour = "black", size = 1) + # Using this segment to colour axis so we can have a longer invisible axis to position text
+
+  # ADD PLOT DATA
+  geom_errorbar(aes(xmin = lower_CI, xmax = upper_CI), width = 0, size = 0.75) +
+  geom_point(size = 4, shape = 15) +
+  
+  # ADD LABELS TO PLOT
+  geom_text(aes(x = 0.33, label = label_quarter), hjust = 0, size = 5) +
+  geom_text(aes(label = label_events, x = 0.48), hjust = 0, size = 5) +
+  geom_text(aes(label = label_HR, x = 1.08), hjust = 0, size = 5) +
+
+  # THEME (NON-DATA ELEMENTS OF PLOT)
+  theme_classic()  + 
+  theme(axis.line.y = element_blank(), 
+        axis.line.x = element_blank(),
+        axis.text.x = element_text(size = 15, colour = "black"), 
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 20), 
+        axis.title.y = element_blank(), 
+        title = element_text(size = 15), 
+        legend.position = "none") + 
+
+    # CANVAS
+    coord_cartesian(xlim = c(0.33, 1.5), clip = "off")
+
+# Display plot 
+overall_activity_cox_plot
+```
+
+We could edit this plot to make it visually nicer, but for now we write it out to save it:
+```{r}
+svg("overall_activity_cox_plot.svg")
+print(overall_activity_cox_plot)
+dev.off()
+```
+
+## Additional and sensitivity analyses
+
+There are many additional or sensitivity analyses we could use to better understand these results. 
+
+When working with physical activity, adiposity/ body size is an important consideration. Adiposity may *mediate* associations between physical activity and CVD, and so we did not adjust for it in our main analysis. However, adiposity may also act as a confounder, in which case we would want to adjust for it.
+
+An analysis adjusting for Body Mass Index (BMI) may help to explore its role a little further:
+```{r}
+cox_model_strat_wbmi <- coxph(
+                            Surv(fu_time, ind_inc_cvd) ~ overall_activity_quarters + age_entry_years + strata(sex) + ethnicity + tdi_quarters + age_education + smoking + alcohol + BMI,
+                            data = dat
+                            )
+cox.zph(cox_model_strat_wbmi)
+plot(cox.zph(cox_model_strat_wbmi))
+```
+
+We can compare the association seen in this model to that in our earlier model: 
+```{r}
+# Without BMI adjustment
+summary(cox_model_strat)$conf.int
+
+# With BMI adjustment
+summary(cox_model_strat_wbmi)$conf.int
+```
+
+We see that adjusting for BMI has partially attenuated the associations seen, suggesting they are partially explained by BMI (e.g. HR for quarter 4 vs quarter 1 of overall activity attenuated from 0.64 to 0.72). 
+
+This is just one example of a useful and relevant additional analysis. Other examples can be found in the linked papers. 
+
+## Uploading plots and tables
+
+We shouldn't forget to upload the figures we've generated in this session. 
+
+Run the following lines in terminal:
+
+`dx upload descriptive_table.html --dest Accelerometry_RAP_Demo/descriptive_table.html`
+
+`dx upload overall_activity_cox_plot.svg --dest Accelerometry_RAP_Demo/overall_activity_cox_plot.svg`
