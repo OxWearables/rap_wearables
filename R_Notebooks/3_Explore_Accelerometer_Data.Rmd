@@ -390,3 +390,65 @@ p<-ggplot(dat_hour_means[dat_hour_means$sex=='Male',], aes(x=variable, y=value, 
   ylab("Acceleration [mg]")
 p
 ```
+
+## Cumulative time spent at acceleration levels below certain values by sex and age
+
+We'll look at cumulative time spent up to particular acceleration values, split by sex and age. As the acceleration range spanned is large, we'll make two cumulative plots, with different levels of granularity. This allows us to see both the detail at the lower end and the big picture. So we can easily repeat across groups, we'll write some functions to make the plots:
+```{r}
+# Column Variables
+colvars = names(dat)
+
+# Get the first fraction acceleration column ID
+start_loc = match('Fraction acceleration <= 1 milli-gravities', colvars)
+
+# Get the last fraction acceleration column ID
+end_loc = match('Fraction acceleration <= 300 milli-gravities', colvars)
+
+dat_cummulative <- dat[, c(1, seq(start_loc, end_loc, by=2))]
+
+# pattern is extract value
+names(dat_cummulative)[-1] <- as.numeric(gsub("Fraction acceleration <= | milli-gravities", 
+                                              "", 
+                                       names(dat_cummulative)[-1]))
+
+dat_cummulative <- merge(melt(dat_cummulative, id.vars='eid'), 
+                         dat[, c('eid', 'age_cat', 'sex')], 
+                         by='eid', all.x=TRUE)
+
+p<-ggplot(dat_cummulative[dat_cummulative$age_cat=='45-54',], 
+          aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 45-54") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+
+p<-ggplot(dat_cummulative[dat_cummulative$age_cat=='55-64',], aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 55-64") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+
+p<-ggplot(dat_cummulative[dat_cummulative$age_cat=='65-74',], aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 65-74") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+
+p<-ggplot(dat_cummulative[dat_cummulative$age_cat=='75-79',], aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 75-79") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+```
