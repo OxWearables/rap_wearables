@@ -1,3 +1,8 @@
+---
+title: "R Notebook"
+output: rmarkdown::github_document
+---
+
 # A Basic Disease Association Analysis Using the UKB Accelerometer Data
 ## Introduction
 In this notebook, we will associate overall activity levels with risk of incident cardiovascular disease.

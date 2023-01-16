@@ -1,3 +1,8 @@
+---
+title: "R Notebook"
+output: rmarkdown::github_document
+---
+
 # Data Analysis of UKB Accelerometer Data
 
 In this notebook, we will replicate [this research paper](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649). This was the paper that first introduced the Accelerometry variables available in the Showcase in UK Biobank, and is a good general introduction to the dataset. We briefly review a few key points here, but that paper is well worth a read!
