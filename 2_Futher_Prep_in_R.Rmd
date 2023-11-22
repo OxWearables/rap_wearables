@@ -4,7 +4,6 @@ output: rmarkdown::github_document
 ---
 
 # Further data preparation in R
-testing
 
 ## Introduction
 
@@ -19,7 +18,7 @@ Specifically, we will:
 
 ## About this notebook
 
-This notebook is converted from a notebook (2_Further_Pref_in_R.ipynb) that runs the R code from a jupyter notebook.
+Update for 2023 course by Alaina Shreves and Aidan Acquah.
 
 Note that this notebook uses the following conventions:
 
@@ -42,7 +41,7 @@ We load packages we'll use:
 pkgs <- c("data.table", "plyr") # packages we need
 pkgs_inst <- pkgs[!{pkgs %in% rownames(installed.packages())}] # check which are not present 
 install.packages(pkgs_inst, repos = "https://www.stats.bris.ac.uk/R/") # install
-
+options(bitmapType='cairo')
 # Load packages
 lapply(pkgs, library, character.only = TRUE) # using lapply just allows us to load several packages on one line - this could be replaced with several calls to library()
 ```
@@ -50,13 +49,11 @@ lapply(pkgs, library, character.only = TRUE) # using lapply just allows us to lo
 We load data:
 
 ```{r}
-# Note that in order to be able to load the data from these locations, you will need to start a new Jupyter Lab session relative to the previous notebook.
-# Alternatively you could replace these locations with appropriate file locations from the current session's storage, or you could try remounting (see: 
-# community.dnanexus.com/s/question/0D5t000003vAWYxCAO/it-seems-that-the-recently-dx-uploaded-files-does-not-show-up-on-mntproject-until-i-restart-the-whole-jupyter-lab-vm)
-dat <- fread("/mnt/project/Accelerometry_RAP_Demo/participant_wacc_data.csv", data.table = FALSE) # fread is a function from the data.table package for fast reading of large data
-dat_hes <- fread("/mnt/project/Accelerometry_RAP_Demo/hes_wacc_data.csv", data.table = FALSE)
-dat_death <- fread("/mnt/project/Accelerometry_RAP_Demo/death_wacc_data.csv", data.table = FALSE)
-dat_death_cause <- fread("/mnt/project/Accelerometry_RAP_Demo/death_cause_wacc_data.csv", data.table = FALSE)
+# Change the locations to your user folder data files
+dat <- fread("/mnt/project/users/<user_name>/participant_wacc_data.csv", data.table = FALSE) # fread is a function from the data.table package for fast reading of large data
+dat_hes <- fread("/mnt/project/users/<user_name>/hes_wacc_data.csv", data.table = FALSE)
+dat_death <- fread("/mnt/project/users/<user_name>/death_wacc_data.csv", data.table = FALSE)
+dat_death_cause <- fread("/mnt/project/users/<user_name>/death_cause_wacc_data.csv", data.table = FALSE)
 ```
 
 ## Basic R formatting
@@ -177,10 +174,7 @@ Finally, we do a few sense checks:
 
 ```{r}
 # Checks
-hist(dat$date_hes_first_cvd[dat$ind_inc_hes_cvd], 
-     breaks = as.Date(c("1980-01-01", "2010-01-01", "2012-01-01", "2014-01-01", "2016-01-01", "2018-01-01", "2020-01-01", "2022-01-01")))
-hist(dat$date_hes_first_cvd[dat$ind_prev_hes_cvd], 
-     breaks = as.Date(c("1970-01-01", "1980-01-01", "1990-01-01",  "1995-01-01", "2000-01-01", "2005-01-01", "2010-01-01", "2013-01-01", "2016-01-01", "2022-01-01")))
+hist(dat$date_hes_first_cvd[dat$ind_inc_hes_cvd], breaks = 4)
 ```
 
 Recall our original note that, though we will not be inspecting the data directly in these notebooks, plenty of inspection was used in developing these notebooks and we encourage readers to add that throughout!
@@ -449,9 +443,9 @@ ind_scotland <-
   dat$ukb_assess_cent %in% c("Edinburgh", "Glasgow")
 
 # Note that if hospital and death records have different censoring dates, we use the earlier one
-dat$date_cens <- "2021-09-30"
-dat$date_cens[ind_wales] <- "2016-03-31" # note we're using diagnosis data so we use diagnosis data censoring date
-dat$date_cens[ind_scotland] <- "2021-07-31"
+dat$date_cens <- "2022-10-31"
+dat$date_cens[ind_wales] <- "2022-05-31" # note we're using diagnosis data so we use diagnosis data censoring date
+dat$date_cens[ind_scotland] <- "2022-08-31"
 dat$date_cens <- as.Date(dat$date_cens)
 ```
 
@@ -470,7 +464,7 @@ tab_exc <- rbind(tab_exc,
 tab_exc
 ```
 
-Participants who died should be censored at death, provided this occurred before the end of records: \# People who died are censored at earliest of date of death and overall censoring \# e.g. a participant in Wales who died in 2020 should be censored at 31.03.2016
+Participants who died should be censored at death, provided this occurred before the end of records: \# People who died are censored at earliest of date of death and overall censoring \#
 
 ```{r}
 dat$date_cens[dat$ind_died] <-
@@ -521,7 +515,7 @@ dat$age_exit_days <- as.double(dat$age_entry_days + dat$fu_time)
 dat$age_exit_days2 <-  as.double(difftime(dat$date_fu, dat$approx_dob, units = "days")) # calculation in an alternative way just so we can implement a logic
 ```
 
-check
+Logic check, if you get error message, check code above. If no error message, continue on.
 
 ```{r}
 # Logic check
@@ -535,7 +529,7 @@ We noted that it is well worth inspecting your data to check the code is behavin
 ```{r}
 dat$fu_years <- dat$fu_time/365.25
 # Follow up time distribution
-hist(dat$fu_years)
+hist(dat$fu_years, xlim = c(0,10))
 
 # Follow up time in different groups
 aggregate(dat$fu_years, list(dat$ukb_assess_cent), FUN = function(x) {round(median(x), digits = 1)}) 
@@ -554,4 +548,8 @@ As previously, we need to write out the data so we can reuse it, and upload it t
 write.csv(dat, "prepped_data.csv", row.names = FALSE)
 ```
 
-In terminal, run the following code: `dx upload prepped_data.csv --dest Accelerometry_RAP_Demo/prepped_data.csv`
+Save to permanent storage on the RAP
+
+```{bash}
+dx upload prepped_data.csv --dest users/<user_name>/prepped_data.csv
+```
