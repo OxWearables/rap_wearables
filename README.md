@@ -19,6 +19,7 @@ This repository contains one Jupyter notebook for accessing data from the RAP, a
 Visual inspection of the data is invaluable for understanding what the code is doing. The worked example does not contain much visual inspection, to avoid printing participant data on the internet. Add statements to get a feel for the data as you work through the tutorials (e.g. `head()`, `str()` statements in R). But don't commit or publish results of these!
 
 ![image](https://user-images.githubusercontent.com/40437498/190090267-9c080819-73a1-4fa0-a82e-25bbd551d811.png)
+
 *Illustration of the processing pipeline in this repository.*
 
 ## Instructions for Oxford CDT
