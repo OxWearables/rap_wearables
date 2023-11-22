@@ -553,3 +553,8 @@ Save to permanent storage on the RAP
 ```{bash}
 dx upload prepped_data.csv --dest users/<user_name>/prepped_data.csv
 ```
+
+## Clean up
+```{r}
+rm(list = setdiff(ls(), "dat"))
+```
