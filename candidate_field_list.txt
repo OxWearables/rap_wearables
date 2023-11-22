@@ -20,7 +20,7 @@
 23099 # bodyFat.23099
 
 # SOCIOECONOMIC
-189 # townsendIndex.189
+22189 # townsendIndex.22189
 845 # ageCompletedFullTimeEducation.845
 6138 # education.6138
 
