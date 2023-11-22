@@ -1,0 +1,395 @@
+---
+title: "R Notebook"
+output: rmarkdown::github_document
+---
+
+# Data Analysis of UKB Accelerometer Data
+
+In this notebook, we will replicate [this research paper](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649).
+This was the paper that first introduced the Accelerometry variables available in the Showcase in UK Biobank, and is a good general introduction to the dataset. We briefly review a few key points here, but that paper is well worth a read!
+
+There is one important difference between that paper and what we'll do here. Because we've already tidied our data to just work with the subset of participants without prior cardiovascular disease (as we'll use in the next notebook), we'll consider just that subset here as well.
+
+This particular notebook has been rewritten from python to R, for using R studio on the RAP system.
+
+## UK Biobank accelerometry data: a very brief introduction
+
+**What is the UK Biobank accelerometer study?**
+
+Between 2013 and 2015, approximately 100,000 UK Biobank participants wore a *physical activity monitor*. This *physical activity monitor* was an [Axivity AX3 research-grade accelerometer](https://axivity.com/product/ax3), and did not give feedback to participants.
+
+**Who participated in the UK Biobank accelerometer study?**
+
+Roughly 100,000 participants from the original UK Biobank study.
+
+Recruitment (from [Doherty et al](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649)):
+
+> *Between February 2013 and December 2015, participants who had
+> provided a valid email address were sent an email invitation to wear
+> an accelerometer for seven days. The participant email addresses were
+> chosen randomly, with the exception of the North West region which was
+> excluded for much of the project due to participant burden concerns,
+> as this area had been used to trial new projects. From June 2013,
+> participants were sent devices in order of acceptance.*
+
+**What is an accelerometer?**
+
+An accelerometer is a device to measure acceleration. When the accelerometer is attached to the body (e.g. worn around the wrist as in UK Biobank), these acceleration measurements can be used to understand human movement.
+
+Accelerometers are used in both research-grade and consumer activity monitors.
+
+**What was the measurement protocol in UK Biobank?**
+
+Please see [Doherty et al](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649).
+
+Participants were posted an Axivity AX3 accelerometer to wear on the dominant wrist. It was set up to start at 10am two working days after postal dispatch, and to capture triaxial acceleration data over 7 days at 100 Hz with a dynamic range of +-8 *g*.
+
+From [Doherty et al](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649):
+
+> *Participants were informed in the invitation email and device
+> mail-out letter that the accelerometer should be worn continuously and
+> that they should carry on with their normal activities. Participants
+> were asked to start wearing the accelerometer immediately after
+> receiving it in the post and to wear the monitor on their dominant
+> wrist. They were also informed that the device was configured to
+> automatically turn itself on soon after its arrival and off seven days
+> later. Finally, participants were asked to mail the device back to the
+> co-ordinating centre, in a pre-paid envelope, after the seven day
+> monitoring period.*
+
+**Did the device record other modalities?**
+
+The device did not record other modalities which may be available in commercially-available devices (such as heart rate).
+
+The device does record temperature and light, although to our knowledge these have not been directly used in health applications (temperature is used in device calibration).
+
+**What can UK Biobank accelerometer data be used for?**
+
+UK Biobank accelerometer data can be used to study many different phenotypes in conjunction with health and disease outcomes as well as with genetics:
+
+-   overall physical activity
+-   step count
+-   physical activity behaviours/ movement behaviours, including sleep,
+    sedentary behaviour, light physical activity, moderate-to-vigorous
+    physical activity, walking
+-   behavioural pattern
+-   energy expenditure
+-   circadian rhythm
+-   sleep quality
+
+**What phenotypes are available?**
+
+Here we will consider only the original accelerometer-based phenotypes i.e. those that appeared in the initial [Doherty et al](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649) paper. These are available through the Data Showcase (standard tabular UK Biobank data). They include metrics relating to data quality (e.g. calibration and wear time), metrics of overall activity (average acceleration), metrics of time spent above different acceleration thresholds (which may be used for so-called 'cut-point' based definitions of time in different intensities of activity), and metrics by time of day/day of week. Basic properties of accelerometer wear, such as the date, are also recorded. Meanings of the different variables are extensively described both within Showcase and in the paper.
+
+Since then, studies have developed different phenotypes and have applied their definitions to the UKB accelerometer data. Some of these phenotypes can now be accessed via 'returns' to the UK Biobank resources. For example:
+
+-   Machine-learning models have been developed to classify movement
+    behaviours. See
+    [[1](https://www.nature.com/articles/s41598-018-26174-1)];
+    [[2](https://www.nature.com/articles/s41467-018-07743-4)]; and
+    [[3](https://bjsm.bmj.com/content/early/2022/08/02/bjsports-2021-104050)].
+-   Algorithms for [different sleep
+    metrics](https://www.nature.com/articles/s41467-019-09576-1)
+    [[4](https://www.medrxiv.org/content/10.1101/2023.02.20.23285750v1)]
+
+This probably only represents a small snapshot of what's been done. Let us know about other resources by adding an issue on GitHub or emailing us and we will add them to this list.
+
+**I'm interested in a different phenotype. Can I access the raw accelerometer files to generate it myself?**
+
+Yes. Bulk files for the accelerometer data are available via the RAP platform. You can also access 'intermediate' files, such as a [summarisation of the signal each 5 seconds](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=90004) (smaller in size than the raw data, which is a 100 Hz signal i.e. has 100 measurements/second).
+
+You might also be interested in resources available to help process accelerometer data, such as:
+
+-   <https://github.com/OxWearables/biobankAccelerometerAnalysis>
+-   <https://cran.r-project.org/web/packages/GGIR/vignettes/GGIR.html>
+
+Again, get in touch with additions to this list!
+
+If you have other questions about the UKB accelerometer study, feel free to post them as an issue on GitHub.
+
+We'll now dive into having a look at the data.
+
+## About this notebook
+
+Most of the material in this notebook is due to Junayed Naushad and Rosemary Walmsley.
+
+## Set up the session
+```{r, include=FALSE}
+# First we need to install packages that aren't already present
+pkgs <- c("data.table", "plyr", "ggplot2", "reshape2", "dplyr") # packages we need
+pkgs_inst <- pkgs[!{pkgs %in% rownames(installed.packages())}] # check which are not present 
+install.packages(pkgs_inst, repos = "https://www.stats.bris.ac.uk/R/") # install
+
+options(bitmapType='cairo')
+
+# Load packages
+lapply(pkgs, library, character.only = TRUE) # using lapply just allows us to load several packages on one line - this could be replaced with several calls to library()
+
+rm(pkgs, pkgs_inst)
+```
+
+## Load data
+```{r}
+dat <- fread("prepped_data.csv", data.table = FALSE) # If running in the same session as the previous notebook
+```
+
+Following the paper that we're following here, we'll only analyse those participants aged 45 years and older:
+
+```{r}
+print(nrow(dat)) # print number of rows
+dat <- dat[dat$age_entry_years >= 45,]
+print(nrow(dat)) # print number of rows
+```
+
+You might note that there are slight differences in numbers relative to the published paper. We're using a different cohort, and it looks like we might have generated the age variable differently (different precision).
+
+## Convert Fraction of Week to Hours
+```{r}
+# Column Variables
+colvars = names(dat)
+
+# Get the first fraction acceleration column ID
+start_loc = match('Fraction acceleration <= 1 milli-gravities',colvars)
+
+# Get the last fraction acceleration column ID
+end_loc = match('Fraction acceleration <= 300 milli-gravities',colvars)
+
+# Convert all values in column range to hours
+dat[, start_loc:end_loc] = dat[, start_loc:end_loc]*24*7
+```
+
+## Wear Duration
+
+Looking at wear duration shows the majority of included participants have very high wear time:
+
+```{r}
+wear_duration <- dat[, 'Wear duration overall']
+
+wear_percentiles <- quantile(wear_duration, c(.25, .5, .75))
+
+cat('25th percentile wear duration: ', round(wear_percentiles[1], digits = 3), 'days\n')
+cat('Median wear duration: ', round(wear_percentiles[2], digits = 3), 'days\n')
+cat('75th percentile wear duration: ', round(wear_percentiles[3], digits = 3), 'days\n')
+```
+
+## Acceleration by Age Group
+```{r}
+# First we divide participants into age categories
+dat$age_cat <- cut(dat$age_entry_years,
+                   breaks = c(45, 55, 65, 75, 80),
+                   labels = c('45-54', '55-64', '65-74', '75-79'))
+
+
+p<-ggplot(dat, aes(age_cat, overall_activity)) +
+  ggtitle("Acceleration by Age Group") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = c(0, quantile(dat$overall_activity, 0.995))) +
+  xlab("Age Group [years]") + 
+  ylab("Acceleration [mg]")
+p
+```
+
+## Acceleration by Sex
+```{r}
+p<-ggplot(dat, aes(sex, overall_activity)) +
+  ggtitle("Acceleration by Sex") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = c(0, quantile(dat$overall_activity, 0.995))) +
+  xlab("Sex") + 
+  ylab("Acceleration [mg]")
+p
+```
+## Acceleration by Age Group and Sex
+```{r}
+p<-ggplot(dat, aes(x=age_cat, y=overall_activity, color=sex)) +
+  ggtitle("Acceleration by Age Group and Sex") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = c(0, quantile(dat$overall_activity, 0.995))) +
+  xlab("Age Group [years]") + 
+  ylab("Acceleration [mg]")
+p
+```
+
+## Acceleration by Day
+```{r}
+days <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+
+acc_by_day <- dat[, paste(days, 'average acceleration')]
+colnames(acc_by_day) <- days
+
+p<-ggplot(melt(acc_by_day), aes(x=variable, y=value)) +
+  ggtitle("Acceleration by Day") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = c(0, quantile(dat$overall_activity, 0.995))) +
+  xlab("Day of Week") + 
+  ylab("Acceleration [mg]")
+p
+```
+
+## Acceleration Weekday/Weekend
+```{r}
+acc_by_day$Weekday <- rowMeans(acc_by_day[, c("Monday", "Tuesday", "Wednesday", 
+                                             "Thursday", "Friday")])
+acc_by_day$Weekend <- rowMeans(acc_by_day[, c("Saturday", "Sunday")])
+
+week_vs_weekend = acc_by_day[, c('Weekday', 'Weekend')]
+
+p<-ggplot(melt(week_vs_weekend), aes(x=variable, y=value)) +
+  ggtitle("Acceleration by Weekday/Weekend") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = c(0, quantile(dat$overall_activity, 0.995))) +
+  xlab("") + 
+  ylab("Acceleration [mg]")
+p
+```
+
+## Acceleration by Season
+```{r}
+dat$end_month <- factor(strftime(dat$date_end_accel, "%m"))
+
+# Define seasons based on months.
+season.levels <- list(
+  Spring = c('03', '04', '05'),
+  Summer = c('06', '07', '08'),
+  Autumn = c('09', '10', '11'),
+  Winter = c('12', '01', '02'))
+
+dat$season <- `levels<-`(dat$end_month, season.levels)
+
+p<-ggplot(dat, aes(season, overall_activity)) +
+  ggtitle("Acceleration by Season") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = c(0, quantile(dat$overall_activity, 0.995))) +
+  xlab("Season") + 
+  ylab("Acceleration [mg]")
+p
+```
+
+## Acceleration by Time of Day
+```{r}
+# set up tick marks
+hours <- c('12am', paste0(1:11,'am'), '12pm', paste0(1:11,'pm'))
+
+# Column Variables
+colvars = names(dat)
+
+# Get the first fraction acceleration column ID
+start_loc = match('Average acceleration 00:00 - 00:59',colvars)
+
+# Get the last fraction acceleration column ID
+end_loc = match('Average acceleration 23:00 - 23:59',colvars)
+
+dat_hour <- dat[, c(1, start_loc:end_loc)]
+names(dat_hour)[-1] <- hours
+
+dat_hour <- merge(melt(dat_hour, id.vars='eid'), 
+                  dat[, c('eid', 'age_cat', 'sex')], 
+                  by='eid', all.x=TRUE)
+
+# Group by function for dataframe in R using pipe operator 
+dat_hour_means <- dat_hour %>% group_by(variable, age_cat, sex) %>% summarise_at(vars(value),funs(mean(.,na.rm=TRUE)))
+
+p<-ggplot(dat_hour_means[dat_hour_means$sex=='Female',], aes(x=variable, y=value, color=age_cat)) +
+  theme_bw() + 
+  ggtitle("Acceleration by Time of Day - Female") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  geom_line(aes(group=age_cat)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, hjust=1), 
+        text = element_text(size=10)) +
+  xlab("Hour of Day") + 
+  ylab("Acceleration [mg]")
+p
+
+
+p<-ggplot(dat_hour_means[dat_hour_means$sex=='Male',], aes(x=variable, y=value, color=age_cat)) +
+  theme_bw() + 
+  ggtitle("Acceleration by Time of Day - Male") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  geom_line(aes(group=age_cat)) +
+  geom_point() + 
+  theme(axis.text.x = element_text(angle = 90, hjust=1), 
+        text = element_text(size=10)) +
+  xlab("Hour of Day") + 
+  ylab("Acceleration [mg]")
+p
+```
+
+## Cumulative time spent at acceleration levels below certain values by sex and age
+
+We'll look at cumulative time spent up to particular acceleration values, split by sex and age. As the acceleration range spanned is large, we'll make two cumulative plots, with different levels of granularity. This allows us to see both the detail at the lower end and the big picture. So we can easily repeat across groups, we'll write some functions to make the plots:
+```{r}
+# Column Variables
+colvars = names(dat)
+
+# Get the first fraction acceleration column ID
+start_loc = match('Fraction acceleration <= 1 milli-gravities', colvars)
+
+# Get the last fraction acceleration column ID
+end_loc = match('Fraction acceleration <= 300 milli-gravities', colvars)
+
+dat_cumulative <- dat[, c(1, seq(start_loc, end_loc, by=2))]
+
+# pattern is extract value
+names(dat_cumulative)[-1] <- as.numeric(gsub("Fraction acceleration <= | milli-gravities", 
+                                              "", 
+                                       names(dat_cumulative)[-1]))
+
+dat_cumulative <- merge(melt(dat_cumulative, id.vars='eid'), 
+                         dat[, c('eid', 'age_cat', 'sex')], 
+                         by='eid', all.x=TRUE)
+
+p<-ggplot(dat_cumulative[dat_cumulative$age_cat=='45-54',], 
+          aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 45-54") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+
+p<-ggplot(dat_cumulative[dat_cumulative$age_cat=='55-64',], aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 55-64") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+
+p<-ggplot(dat_cumulative[dat_cumulative$age_cat=='65-74',], aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 65-74") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+
+p<-ggplot(dat_cumulative[dat_cumulative$age_cat=='75-79',], aes(x=variable, y=value, color=sex)) +
+  ggtitle("Acceleration by Time of Day - 75-79") +
+  theme(plot.title = element_text(hjust=0.5)) +
+  stat_boxplot(geom='errorbar') +
+  geom_boxplot(outlier.shape = NA) +
+  xlab("Acceleration level [mg]") + 
+  ylab("Cummulative time (hours/week)")
+p
+```
+
+## Clean up
+```{r}
+rm(list = setdiff(ls(), "dat"))
+```
