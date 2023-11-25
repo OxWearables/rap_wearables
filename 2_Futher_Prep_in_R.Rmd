@@ -428,7 +428,9 @@ We now add the outcome: time to incident cardiovascular disease. Participants ca
 
 Loss-to-follow-up for particular participants is recorded in [field 191](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=191). This currently hasn't been updated for several years.
 
-[The censoring dates (the end of records) can be obtained from UK Biobank](https://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=Data_providers_and_dates). Note that procedures for how censoring dates are provided when data gets updated on the RAP are currently being established. In particular, there is currently a time gap between update of the Showcase data and update of the data provided on RAP. This mean that when the data is newly updated the censoring dates on the UK Biobank webpage may not apply to the RAP. Pending a solution to this (see [this question](https://community.dnanexus.com/s/question/0D5t000003rG3dgCAC/is-there-a-way-to-find-the-record-censoring-dates-for-a-particular-data-release-version) on the community forums), you may wish to manually check the censoring dates. For example, you can implement the rule described on the UK Biobank webpage:
+[The censoring dates (the end of records) can be obtained from UK Biobank](https://biobank.ndph.ox.ac.uk/ukb/exinfo.cgi?src=Data_providers_and_dates). For the 2023 CDT course, we are using censoring dates suggested by UKB as of December 2022. You can see the dates below. If you end up using another data source in your project (e.g., like cancer registry data), please speak to your tutors about picking a censoring date.
+
+Note that procedures for how censoring dates are provided when data gets updated on the RAP are currently being established. In particular, there is currently a time gap between update of the Showcase data and update of the data provided on RAP. This mean that when the data is newly updated the censoring dates on the UK Biobank webpage may not apply to the RAP. Pending a solution to this (see [this question](https://community.dnanexus.com/s/question/0D5t000003rG3dgCAC/is-there-a-way-to-find-the-record-censoring-dates-for-a-particular-data-release-version) on the community forums), you may wish to manually check the censoring dates. For example, you can implement the rule described on the UK Biobank webpage:
 
 > *The censoring date is the last day of the month for which the number of records is greater than 90% of the mean of the number of records for the previous three months, except where the data for that month is known to be incomplete in which case the censoring date is the last day of the previous month.*
 
@@ -443,9 +445,9 @@ ind_scotland <-
   dat$ukb_assess_cent %in% c("Edinburgh", "Glasgow")
 
 # Note that if hospital and death records have different censoring dates, we use the earlier one
-dat$date_cens <- "2022-10-31"
-dat$date_cens[ind_wales] <- "2022-05-31" # note we're using diagnosis data so we use diagnosis data censoring date
-dat$date_cens[ind_scotland] <- "2022-08-31"
+dat$date_cens <- "2021-09-30"
+dat$date_cens[ind_wales] <- "2018-02-28"
+dat$date_cens[ind_scotland] <- "2021-07-31"
 dat$date_cens <- as.Date(dat$date_cens)
 ```
 
