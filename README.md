@@ -25,6 +25,9 @@ Visual inspection of the data is invaluable for understanding what the code is d
 ## Instructions for Oxford CDT
 If you are on the Oxford Health Data Science CDT course, follow the instructions [here](cdt_instructions.md).
 
+## RAP data extraction template for OxWearables RAP users
+We generated templates for our group to use when extracting data from the RAP. You can find these templates [here](https://github.com/OxWearables/rap_data_access_instructions).
+
 ## Question? Bugs?
 
 If you have a question, feel free to add an issue on GitHub or email [Alaina Shreves](mailto::alaina.shreves@wadham.ox.ac.uk). 
