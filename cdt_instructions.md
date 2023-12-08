@@ -1,9 +1,9 @@
 # CDT Instructions
-These scripts were created for using during Oxford's CDT. For the 2023 course, session on Thursday focuses on **accessing** the data. We will understand some of the non-accelerometer data available in UK Biobank, meet the [UK Biobank Research Analysis Platform](https://www.ukbiobank.ac.uk/enable-your-research/research-analysis-platform) and use it to prepare data for analysis. 
+These scripts were created for using during Oxford's CDT Wearables module. For the 2023 course, the session on Thursday focuses on **accessing** the data. We will disucss some of the non-accelerometer data available in UK Biobank, meet the [UK Biobank Research Analysis Platform](https://www.ukbiobank.ac.uk/enable-your-research/research-analysis-platform) and use it to prepare data for analysis. 
 
 The session on Friday focuses on **running an epidemiological analysis** using data from UK Biobank. 
 
-**Course Tutors:** Alaina Shreves, Adam Sturge, & Charlie Harper
+**2023 Course Tutors:** Alaina Shreves, Adam Sturge, & Charlie Harper
 
 ## Information Governance and Security
 
