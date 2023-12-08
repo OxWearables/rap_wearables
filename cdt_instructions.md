@@ -9,7 +9,8 @@ The session on Friday focuses on **running an epidemiological analysis** using d
 
 When working with participant data, good Information Governance/Security is essential. Work with data **on the Research Analysis Platform only**. Do not download data onto your machine. Watch out for accidental data download e.g. a Jupyter notebook may inadvertently contain data (e.g. from printing parts of the data).  
 
-## Practicalities: getting the notebooks onto the UK Biobank Research Analysis Platform
+## Start here for Thursday's tutorial
+### Practicalities: getting the notebooks onto the UK Biobank Research Analysis Platform
 
 The UK Biobank Research Analysis Platform has permanent storage. In particular, you will be using a project called 'cdt-datachallenge-dec23'. Within the 'users' folder, you have an individual folder. Please store your files in that folder. When you first log in to the platform, you may wish to set up folders called 'data' and 'outputs' within this folder (some of the notebooks will assume you have done that). 
 
@@ -39,17 +40,24 @@ VI. You can now run notebooks from the repository and edit them as you like.
 
 VII. At the end of the session, you can upload to permanent storage (your user folder!) by running (again in the terminal): 
 ```shell
-$ dx upload -r rap_wearables --dest users/ahshreves/ # Remember to change my username to yours! Also don't miss the trailing slash. 
+$ dx upload -r rap_wearables --dest users/<user_name>/ # Remember to change the username to yours! Also don't miss the trailing slash. 
 # dx is a command line client produced by DNANexus
 ```
 
-Alternatively, if you already have things in permanent storage (e.g. having previously run through the steps above), you can download them to your temporary instance using: 
+Alternatively, if you already have things in permanent storage (e.g. having previously run through the steps above), you can download them to your temporary instance.: 
 
 ```shell
-$ dx download -r users/ahshreves/rap_wearables # again change the file path as appropriate
+$ dx download -r users/<user_name>/rap_wearables # again change the file path as appropriate
 ```
 
-## Getting files between the VM and the RAP using the command line interface 
+## Start here for Friday's tutorial
+For Friday's tutorial, we will start by opening the scripts we saved at the end of day on Thursday. You will then be able to access all of the scripts from your permenant storage. 
+First, launch RStudio on the RAP. After the session is loaded, open the terminal within RStudio:
+```bash
+$ dx download -r users/<user_name>/rap_wearables # again change the file path as appropriate
+```
+
+## Getting files between the BMRC VM and the RAP using the command line interface
 
 This is **not** part of the practical. However, in the data challenge you may find you need to transfer files between the VM and the RAP. These instructions introduce how you can do that with the Command Line Interface. 
 
@@ -67,7 +75,6 @@ We are going to use the command line interface to transfer the file directly and
 **Reasons you might want to download a file from the RAP:** PLEASE DO NOT DO THIS IN GENERAL! But, you may want to download a text file containing participant IDs in your cohort from the RAP to your VM so you only process the subset of accelerometer data you need. 
 
 
-
 ### Steps
 
 1. Login to the VM and complete all steps below on the VM.
@@ -80,7 +87,7 @@ We are going to use the command line interface to transfer the file directly and
 
 5. Run `dx login` to log you in to the RAP ([Command Line Quickstart - DNAnexus Documentation](https://documentation.dnanexus.com/getting-started/cli-quickstart). You will need to enter your username and password. You may also have to select the project you want. 
 
-6. Run `dx cd users/ahshreves` to navigate between directories on the RAP. [This is just an example - navigate to the folder you want, not to my folder :)] You can read more about the dx command line interface in the links, but you can also run other commands prefaced by dx (e.g. `dx ls`) 
+6. Run `dx cd users/<user_name>` to navigate between directories on the RAP. [This is just an example - navigate to the folder you want, not to my folder :)] You can read more about the dx command line interface in the links, but you can also run other commands prefaced by dx (e.g. `dx ls`) 
 
 7. To download the file my_eid_list.txt, run `dx download my_eid_list.txt`. 
 
