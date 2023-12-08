@@ -560,3 +560,13 @@ dx upload prepped_data.csv --dest users/<user_name>/prepped_data.csv
 ```{r}
 rm(list = setdiff(ls(), "dat"))
 ```
+
+## Made changes to this script? Push to the RAP permanent storage.
+Manually save the Rmd file and then:
+```{bash}
+dx upload 2_Further_Prep_in_R.Rmd --dest /users/<user_name>/rap_wearables/2_Further_Prep_in_R.Rmd
+```
+
+*Note - This line saves a new file with the same name as the current script.* 
+*To keep track of scripts, either change the name above or delete the old version using the RAP user interface.*
+
