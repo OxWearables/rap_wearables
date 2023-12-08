@@ -393,3 +393,14 @@ p
 ```{r}
 rm(list = setdiff(ls(), "dat"))
 ```
+
+
+## Made changes to this script? Push to the RAP permanent storage.
+Manually save the Rmd file and then:
+```{bash}
+dx upload 3_Explore_Accelerometer_Data.Rmd --dest /users/<user_name>/rap_wearables/3_Explore_Accelerometer_Data.Rmd
+```
+
+*Note - This line saves a new file with the same name as the current script.* 
+*To keep track of scripts, either change the name above or delete the old version using the RAP user interface.*
+
