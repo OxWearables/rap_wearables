@@ -278,3 +278,12 @@ dx upload overall_activity_cox_plot.svg --dest users/<user_name>/overall_activit
 ```{r}
 rm(list = setdiff(ls(), ""))
 ```
+
+## Made changes to this script? Push to the RAP permanent storage.
+Manually save the Rmd file and then:
+```{bash}
+dx upload 4_Disease_Association_Analysis.Rmd --dest /users/<user_name>/rap_wearables/4_Disease_Association_Analysis.Rmd
+```
+
+*Note - This line saves a new file with the same name as the current script.* 
+*To keep track of scripts, either change the name above or delete the old version using the RAP user interface.*
