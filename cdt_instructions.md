@@ -51,10 +51,11 @@ $ dx download -r users/<user_name>/rap_wearables # again change the file path as
 ```
 
 ## Start here for Friday's tutorial
-For Friday's tutorial, we will start by opening the scripts we saved at the end of day on Thursday. You will then be able to access all of the scripts from your permenant storage. 
-First, launch RStudio on the RAP. After the session is loaded, open the terminal within RStudio:
+For Friday's tutorial, we will start by opening the scripts we saved at the end of day on Thursday. You will then be able to access all of the scripts from your permanent storage. 
+
+First, launch an RStudio interface on the RAP. After the session is loaded, open the terminal within RStudio:
 ```bash
-$ dx download -r users/<user_name>/rap_wearables # again change the file path as appropriate
+$ dx download -r users/<user_name> # again change the file path as appropriate
 ```
 
 ## Getting files between the BMRC VM and the RAP using the command line interface
@@ -77,7 +78,7 @@ We are going to use the command line interface to transfer the file directly and
 
 ### Steps
 
-1. Login to the VM and complete all steps below on the VM.
+1. Login to the BMRC VM and complete all steps below on the BMRC VM.
 
 2. Ensure your existing conda environment is activated by running: `conda activate wearables_workshop`. 
 
@@ -89,9 +90,9 @@ We are going to use the command line interface to transfer the file directly and
 
 6. Run `dx cd users/<user_name>` to navigate between directories on the RAP. [This is just an example - navigate to the folder you want, not to my folder :)] You can read more about the dx command line interface in the links, but you can also run other commands prefaced by dx (e.g. `dx ls`) 
 
-7. To download the file my_eid_list.txt, run `dx download my_eid_list.txt`. 
+7. To download the file my_eid_list.txt from the RAP, run `dx download my_eid_list.txt`. 
 
-8. To upload the file accelerometer_summary.csv, run `dx upload accelerometer_summary.csv`. [Note the similarities with how you work with files in the temporary storage on a cloud instance.]
+8. To upload the file accelerometer_summary.csv to the RAP, run `dx upload accelerometer_summary.csv`. [Note the similarities with how you work with files in the temporary storage on a cloud instance.]
 
 9. Logout using `dx logout`. Your file should now be downloaded/ uploaded. 
 
