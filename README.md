@@ -23,10 +23,12 @@ Visual inspection of the data is invaluable for understanding what the code is d
 *Illustration of the processing pipeline in this repository.*
 
 ## Instructions for Oxford CDT
-If you are on the Oxford Health Data Science CDT course, follow the instructions [here](cdt_instructions.md).
+If you are on the 2023 Oxford Health Data Science CDT course, follow the instructions [here](cdt_instructions.md).
 
 ## RAP data extraction template for OxWearables RAP users
-We generated templates for our group to use when extracting data from the RAP. You can find these templates [here](https://github.com/OxWearables/rap_data_access_instructions).
+If you are in the OxWearables group, we have a video tutorial walking thorugh how to access the RAP. Please reach out to Alaina for the link.
+
+If you are extracting data from the RAP for your own analyses, you can find templates for extracting data within our RAP projects [here](https://github.com/OxWearables/rap_data_access_instructions).
 
 ## Question? Bugs?
 
@@ -41,7 +43,7 @@ This worked example draws on several earlier examples and tutorials:
 - https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/using-spark-to-analyze-tabular-data
 - https://github.com/dnanexus/OpenBio/blob/master/UKB_notebooks/ukb-rap-pheno-basic.ipynb
 
-It was written by [Rosemary Walmsley](mailto::rosemary.walmsley@bdi.ox.ac.uk) and Junayed Naushad, with contributions and advice from Ondrej Klempir, Aiden Doherty, and Ben Busby.
+The original tutorial written by [Rosemary Walmsley](mailto::rosemary.walmsley@bdi.ox.ac.uk) and Junayed Naushad, with contributions and advice from Ondrej Klempir, Aiden Doherty, and Ben Busby.
 
 Changes to this repo have been made for the 2023 CDT cohort by Alaina Shreves and Aidan Acquah.
 
