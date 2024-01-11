@@ -347,8 +347,12 @@ dat$ethnicity <-
 dat$tdi <- dat$tdi_raw
 
 #  Education 
-# people were not asked about the age at which they completed full time education if they reported a college or university degree
-# we therefore impute as age 21 in this case
+# Note - This example is based on [this paper](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169649) and [this paper](https://journals.plos.org/plosmedicine/article?
+# id=10.1371/journal.pmed.1003487), which used age of education completion as the education variable. Individuals were not asked about the age at which they completed full time 
+# education if they reported a college or university degree. For the published analyses, the authors imputde age as 21 in this case.
+# For future analyses - If you want to adjust for education, you might consider using a categorical variable that does not make this assumption, 
+# such as ['qualifications'](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=6138).
+
 dat$age_education <- dat$age_education_numeric_raw 
 dat$age_education[grepl("College or University degree", dat$qualif_raw)] <- 21
 # check there are no values below 0, which shouldn't be possible:
