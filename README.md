@@ -22,10 +22,10 @@ Visual inspection of the data is invaluable for understanding what the code is d
 
 *Illustration of the processing pipeline in this repository.*
 
-## Instructions for Oxford CDT
+## Instructions for Oxford CDT users
 If you are on the 2023 Oxford Health Data Science CDT course, follow the instructions [here](cdt_instructions.md).
 
-## RAP data extraction template for OxWearables RAP users
+## Instructions for OxWearables RAP users
 If you are in the OxWearables group, we have a video tutorial walking thorugh how to access the RAP. Please reach out to Alaina for the link.
 
 If you are extracting data from the RAP for your own analyses, you can find templates for extracting data within our RAP projects [here](https://github.com/OxWearables/rap_data_access_instructions).
