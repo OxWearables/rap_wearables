@@ -420,6 +420,9 @@ We cut overall activity and Townsend Deprivation Index into quarters:
 
 ```{r}
 dat$overall_activity_quarters <- qtile_cut(dat$overall_activity, labels = c("Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"))
+# Note - the TDI classification here was quarters of the study population, which was used in the example papers. However, our group now typically uses TDI scaled to quarters of the UK population, 
+# as listed [here](https://s3-eu-west-1.amazonaws.com/statistics.digitalresources.jisc.ac.uk/dkan/files/Townsend_Deprivation_Scores/UK%20Townsend%20Deprivation%20Scores%20from%202011%20census%20data.pdf, page 15)
+
 dat$tdi_quarters <- qtile_cut(dat$tdi, labels = c("Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"))
 ```
 
