@@ -32,9 +32,9 @@ If you are extracting data from the RAP for your own analyses, you can find temp
 
 ## Question? Bugs?
 
-If you have a question, feel free to add an issue on GitHub or email [Alaina Shreves](mailto::alaina.shreves@wadham.ox.ac.uk). 
+If you have a question, feel free to add an issue on GitHub.
 
-There are probably bugs. If you find them, please let us know! Again, add an issue on GitHub or email [Alaina Shreves](mailto::alaina.shreves@wadham.ox.ac.uk). 
+There are probably bugs. If you find them, please let us know! Again, add an issue on GitHub.
 
 ## Credits
 
@@ -43,7 +43,7 @@ This worked example draws on several earlier examples and tutorials:
 - https://dnanexus.gitbook.io/uk-biobank-rap/working-on-the-research-analysis-platform/using-spark-to-analyze-tabular-data
 - https://github.com/dnanexus/OpenBio/blob/master/UKB_notebooks/ukb-rap-pheno-basic.ipynb
 
-The original tutorial written by [Rosemary Walmsley](mailto::rosemary.walmsley@bdi.ox.ac.uk) and Junayed Naushad, with contributions and advice from Ondrej Klempir, Aiden Doherty, and Ben Busby.
+The original tutorial written by Rosemary Walmsley and Junayed Naushad, with contributions and advice from Ondrej Klempir, Aiden Doherty, and Ben Busby.
 
 Changes to this repo have been made for the 2023 CDT cohort by Alaina Shreves and Aidan Acquah.
 
